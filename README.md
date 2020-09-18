@@ -7,6 +7,8 @@ Things you'll want to evaluate before migrating:
 
 - If you currently are using django config settings such as CMSPLUGIN_FILER_IMAGE_STYLE_CHOICES or FILER_LINK_STYLES, you'll need to copy these as DJANGOCMS_PICTURE_TEMPLATES and DJANGOCMS_LINK_TEMPLATES, respectively. Note: there is a difference in behavior with FILER_LINK_STYLES and DJANGOCMS_LINK_TEMPLATES. The former would simply set a class while the latter expects a corresponding template to be created. Reference: https://github.com/divio/djangocms-link/#configuration
 
+Migration steps:
+
 1. Before running the migration, you can run the following command to make sure you back up the old plugin tables for quick restoring if needed.
 ./manage.py dumpdata cmsplugin_filer_file cmsplugin_filer_folder cmsplugin_filer_image cmsplugin_filer_link > ~/cmsplugin_filer.json
 
