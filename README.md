@@ -30,3 +30,7 @@ INSTALLED_APPS += (
 5. If you once again run ./manage.py cms list plugins, you should see the cmsplugin-filer objects have been converted to djangocms-[file/link/picture] objects.
 
 6. Do a spotcheck of plugins on the site. This is where you may see errors related to previous FILER_LINK_STYLES that are now expecting corresponding templates to be created for each style.
+
+Still needed:
+
+- a migration for video plugins
