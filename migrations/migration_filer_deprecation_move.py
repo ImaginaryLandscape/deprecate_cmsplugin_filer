@@ -158,15 +158,76 @@ def forwards_filer_link(apps, schema_editor):
     return cmsplugin_filer_link
 
 
+def forwards_filer_video(apps, schema_editor):
+    try:
+        CMSPluginFilerVideo = apps.get_model('cmsplugin_filer_video',
+                                            'FilerVideo')
+        cmsplugin_filer_video = True
+    except LookupError:
+        cmsplugin_filer_video = False
+    if cmsplugin_filer_video:
+        DjangoCMSVideo = apps.get_model('djangocms_video', 'VideoPlayer')
+        DjangoCMSVideoSource = apps.get_model('djangocms_video', 'VideoSource')
+        for old_object in CMSPluginFilerVideo.objects.all():
+            old_cmsplugin_ptr = old_object.cmsplugin_ptr
+
+            attributes = {}
+            if old_object.width:
+                attributes.update({'width': old_object.width})
+            if old_object.height:
+                attributes.update({'height': old_object.height})
+            if old_object.auto_play:
+                attributes.update({'autoplay': True})
+            if old_object.loop:
+                attributes.update({'loop': True})
+
+            new_object = DjangoCMSVideo(
+                embed_link=old_object.movie_url or '',
+                poster=old_object.image,
+                attributes=attributes,
+
+                # fields for the cms_cmsplugin table
+                position=old_cmsplugin_ptr.position,
+                language=old_cmsplugin_ptr.language,
+                plugin_type='VideoPlayerPlugin',
+                creation_date=old_cmsplugin_ptr.creation_date,
+                changed_date=old_cmsplugin_ptr.changed_date,
+                parent=old_cmsplugin_ptr.parent,
+                placeholder=old_cmsplugin_ptr.placeholder,
+                depth=old_cmsplugin_ptr.depth,
+                numchild=1 if old_object.movie else 0,
+                path=old_cmsplugin_ptr.path,
+            )
+            movie_file = old_object.movie
+            old_object.delete()
+            new_object.save()
+            if movie_file:
+                new_source = DjangoCMSVideoSource(
+                    source_file = movie_file,
+
+                    # fields for the cms_cmsplugin table
+                    position=1,
+                    language=new_object.language,
+                    plugin_type='VideoSourcePlugin',
+                    parent=new_object,
+                    placeholder=new_object.placeholder,
+                    depth=new_object.depth+1,
+                    path='%s0001' % new_object.path
+                )
+                new_source.save()
+    return cmsplugin_filer_video
+
+
 def forwards(apps, schema_editor):
     cmsplugin_filer_file = forwards_filer_file(apps, schema_editor)
     cmsplugin_filer_folder = forwards_filer_folder(apps, schema_editor)
-    # move all inherited plugins first, then the parents
     cmsplugin_filer_link = forwards_filer_link(apps, schema_editor)
     cmsplugin_filer_image = forwards_filer_image(apps, schema_editor)
+    cmsplugin_filer_video = forwards_filer_video(apps, schema_editor)
 
     if not cmsplugin_filer_file and not cmsplugin_filer_folder and not \
-        cmsplugin_filer_image and not cmsplugin_filer_link:
+        cmsplugin_filer_image and not cmsplugin_filer_link and not \
+        cmsplugin_filer_video:
         return
 
 
@@ -180,6 +241,5 @@ class Migration(migrations.Migration):
         migrations.RunPython(forwards, migrations.RunPython.noop),
     ]
     dependencies = [
-        #('djangocms_file', '0010_removed_null_fields'),
-        #('djangocms_picture', '0007_fix_alignment'),
+        # Let's try to be version agnostic
     ]
