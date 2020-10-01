@@ -1,5 +1,5 @@
 # deprecate_cmsplugin_filer
-A small app with a migration for converting deprecated cmsplugin-filer objects to djangocms plugin objects. Adapted from https://gist.github.com/wfehr/86ac31e8e263b872b746cc721662251e to add link plugin capability.
+A small app with a migration for converting deprecated cmsplugin-filer objects to djangocms plugin objects. Adapted from https://gist.github.com/wfehr/86ac31e8e263b872b746cc721662251e to add link and video plugin capability.
 
 Things you'll want to evaluate before migrating:
 
