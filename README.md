@@ -1,5 +1,5 @@
 # deprecate_cmsplugin_filer
-A small app with a migration for converting deprecated cmsplugin-filer objects to djangocms plugin objects. Adapted from https://gist.github.com/wfehr/86ac31e8e263b872b746cc721662251e to add link plugin capability.
+A small app with a migration for converting deprecated cmsplugin-filer objects to djangocms plugin objects. Adapted from https://gist.github.com/wfehr/86ac31e8e263b872b746cc721662251e to add link and video plugin capability.
 
 Things you'll want to evaluate before migrating:
 
@@ -10,7 +10,7 @@ Things you'll want to evaluate before migrating:
 Migration steps:
 
 1. Before running the migration, you can run the following command to make sure you back up the old plugin tables for quick restoring if needed.
-./manage.py dumpdata cmsplugin_filer_file cmsplugin_filer_folder cmsplugin_filer_image cmsplugin_filer_link > ~/cmsplugin_filer.json
+./manage.py dumpdata cmsplugin_filer_file cmsplugin_filer_folder cmsplugin_filer_image cmsplugin_filer_link cmsplugin_filer_video > ~/cmsplugin_filer.json
 
 2. Ensure you've installed the new plugins, added them to INSTALLED_APPS, and migrated:
 pip install djangocms-file djangocms-link djangocms-picture djangocms-video
