@@ -109,7 +109,8 @@ def forwards_filer_image(apps, schema_editor):
                 link_attributes=old_object.link_attributes,
                 # defaults for fields that don't exist in the old_object
                 use_no_cropping=0,
-                template=get_picture_templates()[0][0],
+                # works only if old and new templates have the same names:
+                template=old_object.style if old_object.style else 'default',
                 # fields for the cms_cmsplugin table
                 position=old_cmsplugin_ptr.position,
                 language=old_cmsplugin_ptr.language,
