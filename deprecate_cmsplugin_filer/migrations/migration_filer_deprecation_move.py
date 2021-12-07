@@ -5,6 +5,7 @@ from djangocms_picture.models import get_templates as get_picture_templates
 
 
 def forwards_filer_file(apps, schema_editor):
+    print('filer_file')
     try:
         CMSPluginFilerFile = apps.get_model('cmsplugin_filer_file',
                                             'FilerFile')
@@ -14,9 +15,10 @@ def forwards_filer_file(apps, schema_editor):
     if cmsplugin_filer_file:
         DjangoCMSFileFile = apps.get_model('djangocms_file', 'File')
         for old_object in CMSPluginFilerFile.objects.all():
+            print(f'old_object.cmsplugin_ptr={old_object.cmsplugin_ptr}, old_object.title={old_object.title}')
             old_cmsplugin_ptr = old_object.cmsplugin_ptr
             new_object = DjangoCMSFileFile(
-                file_name=old_object.title,
+                file_name=old_object.title if old_object.title else '',
                 file_src=old_object.file,
                 # defaults for fields that don't exist in the old_object
                 link_target='',
@@ -40,6 +42,7 @@ def forwards_filer_file(apps, schema_editor):
 
 
 def forwards_filer_folder(apps, schema_editor):
+    print('filer_folder')
     try:
         CMSPluginFilerFolder = apps.get_model('cmsplugin_filer_folder',
                                               'FilerFolder')
@@ -50,6 +53,7 @@ def forwards_filer_folder(apps, schema_editor):
         DjangoCMSFileFolder = apps.get_model('djangocms_file', 'Folder')
         for old_object in CMSPluginFilerFolder.objects.all():
             old_cmsplugin_ptr = old_object.cmsplugin_ptr
+            print(f'old_cmsplugin_ptr: {old_cmsplugin_ptr}')
             new_object = DjangoCMSFileFolder(
                 folder_src=old_object.folder,
                 # defaults for fields that don't exist in the old_object
@@ -74,6 +78,7 @@ def forwards_filer_folder(apps, schema_editor):
 
 
 def forwards_filer_image(apps, schema_editor):
+    print('filer_image')
     try:
         CMSPluginFilerImage = apps.get_model('cmsplugin_filer_image',
                                              'FilerImage')
@@ -84,6 +89,7 @@ def forwards_filer_image(apps, schema_editor):
         DjangoCMSPicture = apps.get_model('djangocms_picture', 'Picture')
         for old_object in CMSPluginFilerImage.objects.all():
             old_cmsplugin_ptr = old_object.cmsplugin_ptr
+            print(f'old_cmsplugin_ptr: {old_cmsplugin_ptr}')
             attributes = {}
             if old_object.alt_text:
                 attributes.update({'alt': old_object.alt_text})
@@ -103,7 +109,8 @@ def forwards_filer_image(apps, schema_editor):
                 link_attributes=old_object.link_attributes,
                 # defaults for fields that don't exist in the old_object
                 use_no_cropping=0,
-                template=get_picture_templates()[0][0],
+                # works only if old and new templates have the same names:
+                template=old_object.style if old_object.style else 'default',
                 # fields for the cms_cmsplugin table
                 position=old_cmsplugin_ptr.position,
                 language=old_cmsplugin_ptr.language,
@@ -241,5 +248,8 @@ class Migration(migrations.Migration):
         migrations.RunPython(forwards, migrations.RunPython.noop),
     ]
     dependencies = [
-        # Let's try to be version agnostic
+        ('djangocms_file', '0011_auto_20181211_0357'),
+        ('djangocms_picture', '0011_auto_20190314_1536'),
+        ('djangocms_link', '0015_auto_20190621_0407'),
+        ('djangocms_video', '0010_videoplayer_parameters'),
     ]
