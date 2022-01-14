@@ -53,7 +53,7 @@ def forwards_filer_folder(apps, schema_editor):
         DjangoCMSFileFolder = apps.get_model('djangocms_file', 'Folder')
         for old_object in CMSPluginFilerFolder.objects.all():
             old_cmsplugin_ptr = old_object.cmsplugin_ptr
-            print(f'old_cmsplugin_ptr: {old_cmsplugin_ptr}')
+            print('old_cmsplugin_ptr: {}'.format(old_cmsplugin_ptr))
             new_object = DjangoCMSFileFolder(
                 folder_src=old_object.folder,
                 # defaults for fields that don't exist in the old_object
@@ -89,7 +89,7 @@ def forwards_filer_image(apps, schema_editor):
         DjangoCMSPicture = apps.get_model('djangocms_picture', 'Picture')
         for old_object in CMSPluginFilerImage.objects.all():
             old_cmsplugin_ptr = old_object.cmsplugin_ptr
-            print(f'old_cmsplugin_ptr: {old_cmsplugin_ptr}')
+            print('old_cmsplugin_ptr: {old_cmsplugin_ptr}')
             attributes = {}
             if old_object.alt_text:
                 attributes.update({'alt': old_object.alt_text})
