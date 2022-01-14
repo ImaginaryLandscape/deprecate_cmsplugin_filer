@@ -248,8 +248,12 @@ class Migration(migrations.Migration):
         migrations.RunPython(forwards, migrations.RunPython.noop),
     ]
     dependencies = [
-        ('djangocms_file', '0011_auto_20181211_0357'),
-        ('djangocms_picture', '0011_auto_20190314_1536'),
-        ('djangocms_link', '0015_auto_20190621_0407'),
-        ('djangocms_video', '0010_videoplayer_parameters'),
+        # If 0001_initial is run, we can assume they are in place
+        # specifying a later migration dependncy causes issues
+        # on older projecats that can only install earlier versions
+        # of these libraries
+        ('djangocms_file', '0001_initial'),
+        ('djangocms_picture', '0001_initial'),
+        ('djangocms_link', '0001_initial'),
+        ('djangocms_video', '0001_initial'),
     ]
