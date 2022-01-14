@@ -15,7 +15,7 @@ def forwards_filer_file(apps, schema_editor):
     if cmsplugin_filer_file:
         DjangoCMSFileFile = apps.get_model('djangocms_file', 'File')
         for old_object in CMSPluginFilerFile.objects.all():
-            print(f'old_object.cmsplugin_ptr={old_object.cmsplugin_ptr}, old_object.title={old_object.title}')
+            print('old_object.cmsplugin_ptr={}, old_object.title={}'.format(old_object.cmsplugin_ptr, old_object.title))
             old_cmsplugin_ptr = old_object.cmsplugin_ptr
             new_object = DjangoCMSFileFile(
                 file_name=old_object.title if old_object.title else '',
