@@ -15,7 +15,6 @@ def forwards_filer_file(apps, schema_editor):
     if cmsplugin_filer_file:
         DjangoCMSFileFile = apps.get_model('djangocms_file', 'File')
         for old_object in CMSPluginFilerFile.objects.all():
-            print('old_object.cmsplugin_ptr={}, old_object.title={}'.format(old_object.cmsplugin_ptr, old_object.title))
             old_cmsplugin_ptr = old_object.cmsplugin_ptr
             new_object = DjangoCMSFileFile(
                 file_name=old_object.title if old_object.title else '',
@@ -53,7 +52,6 @@ def forwards_filer_folder(apps, schema_editor):
         DjangoCMSFileFolder = apps.get_model('djangocms_file', 'Folder')
         for old_object in CMSPluginFilerFolder.objects.all():
             old_cmsplugin_ptr = old_object.cmsplugin_ptr
-            print('old_cmsplugin_ptr: {}'.format(old_cmsplugin_ptr))
             new_object = DjangoCMSFileFolder(
                 folder_src=old_object.folder,
                 # defaults for fields that don't exist in the old_object
@@ -89,12 +87,11 @@ def forwards_filer_image(apps, schema_editor):
         DjangoCMSPicture = apps.get_model('djangocms_picture', 'Picture')
         for old_object in CMSPluginFilerImage.objects.all():
             old_cmsplugin_ptr = old_object.cmsplugin_ptr
-            print('old_cmsplugin_ptr: {}'.format(old_cmsplugin_ptr))
             attributes = {}
             if old_object.alt_text:
                 attributes.update({'alt': old_object.alt_text})
             new_object = DjangoCMSPicture(
-                caption_text=old_object.caption_text,
+                caption_text=old_object.caption_text if old_object.caption_text else '',
                 external_picture=old_object.image_url
                 if old_object.image_url else '',
                 use_automatic_scaling=old_object.use_autoscale,
@@ -128,6 +125,7 @@ def forwards_filer_image(apps, schema_editor):
     return cmsplugin_filer_image
 
 def forwards_filer_link(apps, schema_editor):
+    print('filer_link')
     try:
         CMSPluginFilerLink = apps.get_model('cmsplugin_filer_link',
                                             'FilerLinkPlugin')
@@ -166,6 +164,7 @@ def forwards_filer_link(apps, schema_editor):
 
 
 def forwards_filer_video(apps, schema_editor):
+    print('filer_video')
     try:
         CMSPluginFilerVideo = apps.get_model('cmsplugin_filer_video',
                                             'FilerVideo')
