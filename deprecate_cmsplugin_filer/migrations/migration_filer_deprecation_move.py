@@ -136,15 +136,19 @@ def forwards_filer_link(apps, schema_editor):
         DjangoCMSLink = apps.get_model('djangocms_link', 'Link')
         for old_object in CMSPluginFilerLink.objects.all():
             old_cmsplugin_ptr = old_object.cmsplugin_ptr
+            # link_style field was just a class in the old plugin
+            # so add to link html attributes
+            attributes = old_object.link_attributes
+            if old_object.link_style.strip():
+                attributes['class'] = old_object.link_style
             new_object = DjangoCMSLink(
                 name=old_object.name,
                 external_link=old_object.url or '',
                 internal_link=old_object.page_link or None,
                 mailto=old_object.mailto or '',
-                template=old_object.link_style,
                 target='_blank' if old_object.new_window else '',
                 file_link=old_object.file,
-                attributes=old_object.link_attributes,
+                attributes=attributes,
 
                 # fields for the cms_cmsplugin table
                 position=old_cmsplugin_ptr.position,
