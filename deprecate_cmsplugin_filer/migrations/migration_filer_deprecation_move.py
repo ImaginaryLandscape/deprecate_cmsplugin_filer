@@ -24,6 +24,7 @@ def forwards_filer_file(apps, schema_editor):
                 template=get_file_templates()[0][0],
                 show_file_size=1,
                 # fields for the cms_cmsplugin table
+                id=old_cmsplugin_ptr.id,
                 position=old_cmsplugin_ptr.position,
                 language=old_cmsplugin_ptr.language,
                 plugin_type='FilePlugin',
@@ -59,6 +60,7 @@ def forwards_filer_folder(apps, schema_editor):
                 link_target='',
                 show_file_size=0,
                 # fields for the cms_cmsplugin table
+                id=old_cmsplugin_ptr.id,
                 position=old_cmsplugin_ptr.position,
                 language=old_cmsplugin_ptr.language,
                 plugin_type='FolderPlugin',
@@ -90,6 +92,7 @@ def forwards_filer_image(apps, schema_editor):
             attributes = {}
             if old_object.alt_text:
                 attributes.update({'alt': old_object.alt_text})
+            old_link_url = old_object.free_link[:255] if old_object.free_link else ''
             new_object = DjangoCMSPicture(
                 caption_text=old_object.caption_text if old_object.caption_text else '',
                 external_picture=old_object.image_url
@@ -103,12 +106,16 @@ def forwards_filer_image(apps, schema_editor):
                 picture=old_object.image,
                 thumbnail_options=old_object.thumbnail_option,
                 attributes=attributes,
+                link_url=old_link_url,
+                link_page=old_object.page_link or None,
+                link_target='_blank' if old_object.target_blank else '',
                 link_attributes=old_object.link_attributes,
                 # defaults for fields that don't exist in the old_object
-                use_no_cropping=0,
+                use_no_cropping=old_object.use_original_image,
                 # works only if old and new templates have the same names:
                 template=old_object.style if old_object.style else 'default',
                 # fields for the cms_cmsplugin table
+                id=old_cmsplugin_ptr.id,
                 position=old_cmsplugin_ptr.position,
                 language=old_cmsplugin_ptr.language,
                 plugin_type='PicturePlugin',
@@ -151,6 +158,7 @@ def forwards_filer_link(apps, schema_editor):
                 attributes=attributes,
 
                 # fields for the cms_cmsplugin table
+                id=old_cmsplugin_ptr.id,
                 position=old_cmsplugin_ptr.position,
                 language=old_cmsplugin_ptr.language,
                 plugin_type='LinkPlugin',
@@ -197,6 +205,7 @@ def forwards_filer_video(apps, schema_editor):
                 attributes=attributes,
 
                 # fields for the cms_cmsplugin table
+                id=old_cmsplugin_ptr.id,
                 position=old_cmsplugin_ptr.position,
                 language=old_cmsplugin_ptr.language,
                 plugin_type='VideoPlayerPlugin',
@@ -252,11 +261,11 @@ class Migration(migrations.Migration):
     ]
     dependencies = [
         # If 0001_initial is run, we can assume they are in place
-        # specifying a later migration dependncy causes issues
-        # on older projecats that can only install earlier versions
+        # specifying a later migration dependency causes issues
+        # on older projects that can only install earlier versions
         # of these libraries
         ('djangocms_file', '0001_initial'),
-        ('djangocms_picture', '0001_initial'),
-        ('djangocms_link', '0001_initial'),
+        ('djangocms_picture', '0004_adapt_fields'),
+        ('djangocms_link', '0014_link_file_link'),
         ('djangocms_video', '0001_initial'),
     ]
